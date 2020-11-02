@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/spie-lab-01/ADIP/HW#4/HW_4/apps/HW4.cpp
+stdio.h
+-
+opencv2/opencv.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+../include/img_process.hpp
+/home/spie-lab-01/ADIP/HW#4/HW_4/include/img_process.hpp
+
+/home/spie-lab-01/ADIP/HW#4/HW_4/include/img_process.hpp
+stdio.h
+-
+opencv2/opencv.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+

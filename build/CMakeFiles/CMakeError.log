@@ -1,0 +1,26 @@
+Detecting C [-std=c11] compiler features failed to compile with the following output:
+Change Dir: /home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_218fc/fast"
+/usr/bin/make -f CMakeFiles/cmTC_218fc.dir/build.make CMakeFiles/cmTC_218fc.dir/build
+make[1]: Entering directory '/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp'
+make[1]: *** No rule to make target '/home/spie-lab-01/ADIP/HW', needed by 'CMakeFiles/cmTC_218fc.dir/feature_tests.c.o'.  Stop.
+make[1]: Leaving directory '/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_218fc/fast' failed
+make: *** [cmTC_218fc/fast] Error 2
+
+
+
+Detecting CXX [-std=c++1z] compiler features failed to compile with the following output:
+Change Dir: /home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_42087/fast"
+/usr/bin/make -f CMakeFiles/cmTC_42087.dir/build.make CMakeFiles/cmTC_42087.dir/build
+make[1]: Entering directory '/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp'
+make[1]: *** No rule to make target '/home/spie-lab-01/ADIP/HW', needed by 'CMakeFiles/cmTC_42087.dir/feature_tests.cxx.o'.  Stop.
+make[1]: Leaving directory '/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_42087/fast' failed
+make: *** [cmTC_42087/fast] Error 2
+
+
+

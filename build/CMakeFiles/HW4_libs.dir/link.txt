@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHW4_libs.a  CMakeFiles/HW4_libs.dir/src/img_process.cpp.o
+/usr/bin/ranlib libHW4_libs.a
