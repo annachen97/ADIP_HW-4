@@ -1,0 +1,1 @@
+int videoReader(int framenum,char saveimg_path[],bool total);

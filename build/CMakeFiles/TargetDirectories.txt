@@ -1,4 +1,5 @@
 /home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/rebuild_cache.dir
-/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/edit_cache.dir
-/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs.dir
 /home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4.dir
+/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs.dir
+/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/edit_cache.dir
+/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs2.dir

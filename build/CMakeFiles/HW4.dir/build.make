@@ -117,6 +117,7 @@ HW4: /usr/lib/x86_64-linux-gnu/libopencv_ximgproc.so.3.2.0
 HW4: /usr/lib/x86_64-linux-gnu/libopencv_xobjdetect.so.3.2.0
 HW4: /usr/lib/x86_64-linux-gnu/libopencv_xphoto.so.3.2.0
 HW4: libHW4_libs.a
+HW4: libHW4_libs2.a
 HW4: /usr/lib/x86_64-linux-gnu/libopencv_video.so.3.2.0
 HW4: /usr/lib/x86_64-linux-gnu/libopencv_viz.so.3.2.0
 HW4: /usr/lib/x86_64-linux-gnu/libopencv_phase_unwrapping.so.3.2.0

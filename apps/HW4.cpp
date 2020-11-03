@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "../include/img_process.hpp"
+#include "../include/VideoReader.hpp"
 using namespace cv;
 
 void hw1_a()
@@ -12,6 +13,10 @@ void hw1_a()
 
     char house512_path[]="../data/house512.raw";
     char lena512_path[]="../data/lena512.raw";
+    char house_new_path[]="../data/1.a_house.png";
+    char house_his_path[]="../data/1.a_house_his.png";
+    char lena_his_path[]="../data/1.a_lena_his.png";
+    char house_his_new_path[]="../data/1.a_house_his_new.png";
 
     FILE *hs_512,*lena_512;
 
@@ -75,17 +80,71 @@ void hw1_a()
     max=max/255+1;
     new_house_512_his=drawHistogram(hs_gryl_statistics_new,new_house_512_his,max);
 
+    imwrite(house_new_path,new_house_512);
+    imwrite(house_his_path,house_512_his);
+    imwrite(lena_his_path,lenamat_512_his);
+    // imwrite(house_his_new_path,new_house_512_his);
+    // showImage(hs_windowname,house_512);
+    // showImage(lena_windowname,lenamat_512);
+    // showImage(hs_new_windowname,new_house_512);
+    // showImage(hs_his_windowname,house_512_his);
+    // showImage(lena_his_windowname,lenamat_512_his);
+    // showImage(hs_his_new_windowname,new_house_512_his);
+    // closeImage(hs_windowname);
+}
+
+void hw1_b()
+{   
+    int height=512;
+    int width=512;
+    int size=height*width;
+    char house512_path[]="../data/house512.raw";
+    FILE *hs_512;
+    unsigned char *hs_pixel=new unsigned char[size]();
+    unsigned char *hs_pad_pixel=new unsigned char[size]();
+    unsigned int *gryl_statistics=new unsigned int[256]();
+    Mat house_512,house_512_pad;
+    char hs_windowname[]="1.b_hs512";
+    char hs_pad_windowname[]="1.b_hs512_pad";
+
+    house_512.create(height,width,CV_8UC1);
+    hs_pixel=readImage(house512_path,size,hs_512,hs_pixel);
+    memcpy(house_512.data,hs_pixel,size);
+    
+    //mask=9*9
+    int padsize=4;
+    int resize=pow((512+padsize*2),2);
+    
+    // unsigned char *pd_pixel=new unsigned char[resize]();
+    house_512_pad.create(height+padsize*2,width+padsize*2,CV_8UC1);
+    int mode=1;
+    house_512_pad=padding(house_512,house_512_pad,padsize,resize,mode);
+    hs_pad_pixel=storeMat2Pixel(house_512_pad,hs_pad_pixel,resize);
+    gryl_statistics=histogram(gryl_statistics,hs_pad_pixel,resize);
     showImage(hs_windowname,house_512);
-    showImage(lena_windowname,lenamat_512);
-    showImage(hs_new_windowname,new_house_512);
-    showImage(hs_his_windowname,house_512_his);
-    showImage(lena_his_windowname,lenamat_512_his);
-    showImage(hs_his_new_windowname,new_house_512_his);
+    showImage(hs_pad_windowname,house_512_pad);
     closeImage(hs_windowname);
+}
+
+void hw2()
+{
+    int returnnum=0;
+    int framenum=10;
+    bool total=false;
+    char hw2_10frame[]="../data/hw2_10frame.png";
+    returnnum=videoReader(framenum,hw2_10frame,total);
+    framenum=200;
+    char hw2_200frame[]="../data/hw2_200frame.png";
+    returnnum=videoReader(framenum,hw2_200frame,total);
+    total=true;
+    char hw2_allframe[]="../data/hw2_allframe.png";
+    returnnum=videoReader(framenum,hw2_allframe,total);
 }
 
 int main(int argc, char const *argv[])
 {
-    hw1_a();
+    // hw1_a();
+    hw1_b();
+    // hw2();
     return 0;
 }

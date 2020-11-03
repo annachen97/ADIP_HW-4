@@ -141,4 +141,82 @@ unsigned char *match(unsigned char *mapping,unsigned char *hs_pixel,unsigned cha
 }
 
 
+unsigned char* storeMat2Pixel(Mat image,unsigned char* pixel,int size)
+{
+    int height=pow(size,0.5);
+    int width=pow(size,0.5);
+    for (int i = 0; i < height; i++)
+    {   
+        for (int j = 0; i < width; i++)
+        {
+            pixel[i*width+j]=image.at<uchar>(i,j);
+        }
+        
+        
+    }
+    return pixel;
+}
+
+Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode)
+{
+    if(mode==0)//zero padding
+    {
+        padimage.zeros(pow(resize,0.5),pow(resize,0.5),CV_8UC1);
+        for(int i=0;i<(pow(resize,0.5)-padsize*2);i++)
+        {
+            for(int j=0;j<(pow(resize,0.5)-padsize*2);j++)
+            {
+                padimage.row(i+padsize).col(j+padsize)=oldimage.at<uchar>(i,j);
+            }
+        }
+    }else if (mode==1)
+    {
+        int boundary=pow(resize,0.5)-padsize;
+        padimage.zeros(pow(resize,0.5),pow(resize,0.5),CV_8UC1);
+        for(int i=0;i<(pow(resize,0.5));i++)
+        {
+            for(int j=0;j<(pow(resize,0.5));j++)
+            {
+                if(i<padsize&&j<padsize) //zone1
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,0);
+                }else if (i<padsize&&j>=padsize&&j<boundary) //zone2
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,j);
+                }else if (i<padsize&&j>=boundary) //zone3
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,boundary-padsize-1);
+                }else if(i>=padsize&&i<boundary&&j<padsize)    //zone4
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i,0);
+                }else if(i>=padsize&&i<boundary&&j>=boundary) //zone5
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i,boundary-padsize-1);
+                }else if (i>=boundary&&j<padsize)   //zone6
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,0);
+                }else if (i>=boundary&&j>=padsize&&j<boundary)   //zone7
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,j);
+                }else if (i>=boundary&&j>=boundary)   //zone7
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,boundary-padsize-1);
+                }else
+                {
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i-padsize,j-padsize);
+                }
+                
+
+            //    padimage.row(i+padsize).col(j+padsize)=oldimage.at<uchar>(i,j);
+            }
+        } 
+    }
+    
+    return padimage;
+}
+
+
+
+
+
 

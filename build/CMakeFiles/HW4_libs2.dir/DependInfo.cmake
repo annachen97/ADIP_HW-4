@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/spie-lab-01/ADIP/HW#4/HW_4/apps/HW4.cpp" "/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4.dir/apps/HW4.cpp.o"
+  "/home/spie-lab-01/ADIP/HW#4/HW_4/src/VideoReader.cpp" "/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs2.dir/src/VideoReader.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -15,8 +15,6 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs.dir/DependInfo.cmake"
-  "/home/spie-lab-01/ADIP/HW#4/HW_4/build/CMakeFiles/HW4_libs2.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

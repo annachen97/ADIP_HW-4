@@ -15,6 +15,10 @@ opencv2/highgui/highgui.hpp
 -
 ../include/img_process.hpp
 /home/spie-lab-01/ADIP/HW#4/HW_4/include/img_process.hpp
+../include/VideoReader.hpp
+/home/spie-lab-01/ADIP/HW#4/HW_4/include/VideoReader.hpp
+
+/home/spie-lab-01/ADIP/HW#4/HW_4/include/VideoReader.hpp
 
 /home/spie-lab-01/ADIP/HW#4/HW_4/include/img_process.hpp
 stdio.h

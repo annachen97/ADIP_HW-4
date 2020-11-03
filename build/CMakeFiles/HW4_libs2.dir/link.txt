@@ -1,0 +1,2 @@
+/usr/bin/ar qc libHW4_libs2.a  CMakeFiles/HW4_libs2.dir/src/VideoReader.cpp.o
+/usr/bin/ranlib libHW4_libs2.a

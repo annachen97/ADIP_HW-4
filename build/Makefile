@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named HW4
+
+# Build rule for target.
+HW4: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 HW4
+.PHONY : HW4
+
+# fast build rule for target.
+HW4/fast:
+	$(MAKE) -f CMakeFiles/HW4.dir/build.make CMakeFiles/HW4.dir/build
+.PHONY : HW4/fast
+
+#=============================================================================
 # Target rules for targets named HW4_libs
 
 # Build rule for target.
@@ -124,17 +137,17 @@ HW4_libs/fast:
 .PHONY : HW4_libs/fast
 
 #=============================================================================
-# Target rules for targets named HW4
+# Target rules for targets named HW4_libs2
 
 # Build rule for target.
-HW4: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 HW4
-.PHONY : HW4
+HW4_libs2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 HW4_libs2
+.PHONY : HW4_libs2
 
 # fast build rule for target.
-HW4/fast:
-	$(MAKE) -f CMakeFiles/HW4.dir/build.make CMakeFiles/HW4.dir/build
-.PHONY : HW4/fast
+HW4_libs2/fast:
+	$(MAKE) -f CMakeFiles/HW4_libs2.dir/build.make CMakeFiles/HW4_libs2.dir/build
+.PHONY : HW4_libs2/fast
 
 apps/HW4.o: apps/HW4.cpp.o
 
@@ -162,6 +175,33 @@ apps/HW4.s: apps/HW4.cpp.s
 apps/HW4.cpp.s:
 	$(MAKE) -f CMakeFiles/HW4.dir/build.make CMakeFiles/HW4.dir/apps/HW4.cpp.s
 .PHONY : apps/HW4.cpp.s
+
+src/VideoReader.o: src/VideoReader.cpp.o
+
+.PHONY : src/VideoReader.o
+
+# target to build an object file
+src/VideoReader.cpp.o:
+	$(MAKE) -f CMakeFiles/HW4_libs2.dir/build.make CMakeFiles/HW4_libs2.dir/src/VideoReader.cpp.o
+.PHONY : src/VideoReader.cpp.o
+
+src/VideoReader.i: src/VideoReader.cpp.i
+
+.PHONY : src/VideoReader.i
+
+# target to preprocess a source file
+src/VideoReader.cpp.i:
+	$(MAKE) -f CMakeFiles/HW4_libs2.dir/build.make CMakeFiles/HW4_libs2.dir/src/VideoReader.cpp.i
+.PHONY : src/VideoReader.cpp.i
+
+src/VideoReader.s: src/VideoReader.cpp.s
+
+.PHONY : src/VideoReader.s
+
+# target to generate assembly for a file
+src/VideoReader.cpp.s:
+	$(MAKE) -f CMakeFiles/HW4_libs2.dir/build.make CMakeFiles/HW4_libs2.dir/src/VideoReader.cpp.s
+.PHONY : src/VideoReader.cpp.s
 
 src/img_process.o: src/img_process.cpp.o
 
@@ -197,12 +237,16 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... HW4_libs"
 	@echo "... HW4"
+	@echo "... HW4_libs"
+	@echo "... edit_cache"
+	@echo "... HW4_libs2"
 	@echo "... apps/HW4.o"
 	@echo "... apps/HW4.i"
 	@echo "... apps/HW4.s"
+	@echo "... src/VideoReader.o"
+	@echo "... src/VideoReader.i"
+	@echo "... src/VideoReader.s"
 	@echo "... src/img_process.o"
 	@echo "... src/img_process.i"
 	@echo "... src/img_process.s"
