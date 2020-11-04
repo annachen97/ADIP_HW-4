@@ -215,7 +215,7 @@ Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode)
     return padimage;
 }
 
-Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length)
+Mat conv(Mat paded_image, Mat out_image, double* mask, int image_length, int mask_length)
 {
     int init_pixel=(mask_length-1)/2;
     int x=0,y=0;
@@ -254,7 +254,7 @@ Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_l
     return out_image;
 }
 
-int* highboostMask(int* mask,int A,int masksize)
+double* highboostMask(double* mask,int A,int masksize)
 {
     for(int i=0;i<masksize;i++)
     {

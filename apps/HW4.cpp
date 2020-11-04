@@ -98,24 +98,27 @@ void hw1_b()
     int height = 512;
     int width = 512;
     int size = height * width;
-    int masklength=5;   //masksize=3*3 padlength=1 masklength=3 //must be odd
+    int masklength=3;   //masksize=3*3 padlength=1 masklength=3 //must be odd
     char house512_path[] = "../data/house512.raw";
+    char hs_le3_path[] = "../data/hw1.b_hs_le3.png";
+    char hs_le5_path[] = "../data/hw1.b_hs_le5.png";
+    char hs_le9_path[] = "../data/hw1.b_hs_le9.png";
     char hs_windowname[] = "1.b_hs512";
     char hs_pad_windowname[] = "1.b_hs512_pad";
     char hs_le3_windowname[] = "1.b_le3";
     char hs_le5_windowname[] = "1.b_le5";
-    char hs_le10_windowname[] = "1.b_le10";
+    char hs_le9_windowname[] = "1.b_le9";
     unsigned char *hs_pixel = new unsigned char[size]();
     unsigned char *hs_pad_pixel = new unsigned char[size]();
     unsigned int *gryl_statistics = new unsigned int[256]();
-    Mat house_512, house_512_pad, hs_le3, hs_le5, hs_le10;   //local enhencement
+    Mat house_512, house_512_pad, hs_le3, hs_le5, hs_le9;   //local enhencement
     FILE *hs_512;
     
 
     house_512.create(height, width, CV_8UC1);
     hs_le3.create(height, width, CV_8UC1);
     hs_le5.create(height, width, CV_8UC1);
-    hs_le10.create(height, width, CV_8UC1);
+    hs_le9.create(height, width, CV_8UC1);
 
     hs_pixel = readImage(house512_path, size, hs_512, hs_pixel);
     memcpy(house_512.data, hs_pixel, size);
@@ -129,10 +132,30 @@ void hw1_b()
     // hs_pad_pixel = storeMat2Pixel(house_512_pad, hs_pad_pixel, resize);
     // gryl_statistics = histogram(gryl_statistics, hs_pad_pixel, resize);
 
-    hs_le3=localEnhencement(house_512_pad, height+masklength-1, masklength); 
+    hs_le3=localEnhencement(house_512_pad, height+masklength-1, masklength);
+
+    masklength=5;
+    padsize = (masklength-1)/2;
+    resize = pow((512 + padsize * 2), 2);
+    house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
+    house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
+    hs_le5=localEnhencement(house_512_pad, height+masklength-1, masklength);
+
+    masklength=9;
+    padsize = (masklength-1)/2;
+    resize = pow((512 + padsize * 2), 2);
+    house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
+    house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
+    hs_le9=localEnhencement(house_512_pad, height+masklength-1, masklength);
+
+    imwrite(hs_le3_path,hs_le3);
+    imwrite(hs_le5_path,hs_le5);
+    imwrite(hs_le9_path,hs_le9);
     showImage(hs_windowname, house_512);
     showImage(hs_pad_windowname, house_512_pad);
     showImage(hs_le3_windowname, hs_le3);
+    showImage(hs_le5_windowname, hs_le5);
+    showImage(hs_le9_windowname, hs_le9);
     closeImage(hs_windowname);
 }
 
@@ -173,7 +196,7 @@ void hw3_a()
     char hw3_wkbridge_zf2[] = "../data/hw3.a_wkbridge_zf2.png";
     char hw3_wkbridge_rf2[] = "../data/hw3.a_wkbridge_rf2.png";
     unsigned char *pixel = new unsigned char[size]();
-    int* mask = new int[masksize];
+    double* mask = new double[masksize];
     FILE *walkbridge_file;
     Mat walkbridge, walkbridge_pad,walkbridge_zf1, walkbridge_rf1,walkbridge_zf2, walkbridge_rf2;
     
@@ -252,8 +275,8 @@ void hw3_b()
     char hw3_wkbridge_r2f2[] = "../data/hw3.a_wkbridge_r2f2.png";
     char hw3_wkbridge_r4f2[] = "../data/hw3.a_wkbridge_r4f2.png";
     unsigned char *pixel = new unsigned char[size]();
-    int* mask = new int[masksize];
-    int* mask_highboost = new int[masksize];
+    double* mask = new double[masksize];
+    double* mask_highboost = new double[masksize];
     FILE *walkbridge_file;
     Mat walkbridge, walkbridge_pad, walkbridge_r1f1, walkbridge_r2f1, walkbridge_r4f1, walkbridge_r1f2, walkbridge_r2f2, walkbridge_r4f2;
     
@@ -325,15 +348,61 @@ int hw4()
 {
     int masklength=5;
     int masksize=masklength*masklength;
-    char hw4_turtle[] = "../HW_4/data/turtle512.raw";
+    int height=512;
+    int width=512;
+    int padsize=(masklength-1)/2;
+    int resize=pow(height+padsize,2);
+    char hw4_turtle[] = "../data/turtle512.raw";
+    char hw4_turtle08[] = "../data/hw4.a_turtle08.png";
+    char hw4_turtle13[] = "../data/hw4.b_turtle13.png";
+    char hw4_turtle2[] = "../data/hw4.b_turtle2.png";
+    char turtle08_window[]="hw4.a_turtle_0.8";
+    char turtle13_window[]="hw4.a_turtle_1.3";
+    char turtle2_window[]="hw4.a_turtle_2";
     double* mask=new double[masksize]();
     double sigma=0.8;
+    int mode=1;
     mask=gaussian(masklength, sigma);
-    for(int i=0;i<masksize;i++)
-    {
-        printf("%d mask=%f\n",i,mask[i]);
-    }
-    // Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length);
+    Mat turtle_512(height,width,CV_8UC1);
+    Mat turtle_08(height,width,CV_8UC1);
+    Mat turtle_13(height,width,CV_8UC1);    //sigma=1.3
+    Mat turtle_2(height,width,CV_8UC1); //sigma=2
+    Mat padedimage(height+masklength,width+masklength,CV_8UC1);
+    FILE *turtle_file;
+    unsigned char *turtle_pixel=new unsigned char[height*width]();
+
+    turtle_pixel=readImage(hw4_turtle,height*width,turtle_file,turtle_pixel);
+    memcpy(turtle_512.data,turtle_pixel,height*width);
+    // for(int i=0;i<masksize;i++)
+    // {
+    //     printf("%d mask=%f\n",i,mask[i]);
+    // }
+    padedimage = padding(turtle_512, padedimage, padsize, resize, mode);
+    turtle_08=conv(padedimage, turtle_08, mask, height+padsize*2, masklength);
+
+    sigma=1.3;
+    mask=gaussian(masklength, sigma);
+    turtle_13=conv(padedimage, turtle_13, mask, height+padsize*2, masklength);
+    // for(int i=0;i<masksize;i++)
+    // {
+    //     printf("%d mask=%f\n",i,mask[i]);
+    // }
+
+    sigma=2;
+    mask=gaussian(masklength, sigma);
+    turtle_2=conv(padedimage, turtle_2, mask, height+padsize*2, masklength);
+    // for(int i=0;i<masksize;i++)
+    // {
+    //     printf("%d mask=%f\n",i,mask[i]);
+    // }
+    
+    imwrite(hw4_turtle08,turtle_08);
+    imwrite(hw4_turtle13,turtle_13);
+    imwrite(hw4_turtle2,turtle_2);
+    imshow(turtle08_window,turtle_08);
+    imshow(turtle13_window,turtle_13);
+    imshow(turtle2_window,turtle_2);
+    closeImage(turtle08_window);
 }
 
 int main(int argc, char const *argv[])
