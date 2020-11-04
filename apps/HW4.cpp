@@ -98,32 +98,41 @@ void hw1_b()
     int height = 512;
     int width = 512;
     int size = height * width;
+    int masklength=5;   //masksize=3*3 padlength=1 masklength=3 //must be odd
     char house512_path[] = "../data/house512.raw";
     char hs_windowname[] = "1.b_hs512";
     char hs_pad_windowname[] = "1.b_hs512_pad";
+    char hs_le3_windowname[] = "1.b_le3";
+    char hs_le5_windowname[] = "1.b_le5";
+    char hs_le10_windowname[] = "1.b_le10";
     unsigned char *hs_pixel = new unsigned char[size]();
     unsigned char *hs_pad_pixel = new unsigned char[size]();
     unsigned int *gryl_statistics = new unsigned int[256]();
-    Mat house_512, house_512_pad;
+    Mat house_512, house_512_pad, hs_le3, hs_le5, hs_le10;   //local enhencement
     FILE *hs_512;
     
 
     house_512.create(height, width, CV_8UC1);
+    hs_le3.create(height, width, CV_8UC1);
+    hs_le5.create(height, width, CV_8UC1);
+    hs_le10.create(height, width, CV_8UC1);
+
     hs_pixel = readImage(house512_path, size, hs_512, hs_pixel);
     memcpy(house_512.data, hs_pixel, size);
 
     //mask=9*9 padsize=4
-    int padsize = 10;
+    int padsize = (masklength-1)/2;
     int resize = pow((512 + padsize * 2), 2);
-
-    // unsigned char *pd_pixel=new unsigned char[resize]();
     house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
     int mode = 1;
     house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
-    hs_pad_pixel = storeMat2Pixel(house_512_pad, hs_pad_pixel, resize);
-    gryl_statistics = histogram(gryl_statistics, hs_pad_pixel, resize);
+    // hs_pad_pixel = storeMat2Pixel(house_512_pad, hs_pad_pixel, resize);
+    // gryl_statistics = histogram(gryl_statistics, hs_pad_pixel, resize);
+
+    hs_le3=localEnhencement(house_512_pad, height+masklength-1, masklength); 
     showImage(hs_windowname, house_512);
     showImage(hs_pad_windowname, house_512_pad);
+    showImage(hs_le3_windowname, hs_le3);
     closeImage(hs_windowname);
 }
 
@@ -142,7 +151,7 @@ void hw2()
     returnnum = videoReader(framenum, hw2_allframe, total);
 }
 
-void hw3()
+void hw3_a()
 {
     int height = 512;
     int width = 512;
@@ -209,7 +218,6 @@ void hw3()
     imwrite(hw3_wkbridge_rf1,walkbridge_rf1);
     imwrite(hw3_wkbridge_zf2,walkbridge_zf2);
     imwrite(hw3_wkbridge_rf2,walkbridge_zf2);
-    
     showImage(wk_zf1_windowname, walkbridge_zf1);
     showImage(wk_rf1_windowname, walkbridge_rf1);
     showImage(wk_zf2_windowname, walkbridge_zf2);
@@ -217,11 +225,124 @@ void hw3()
     closeImage(wk_zf1_windowname);
 }
 
+void hw3_b()
+{
+    int height = 512;
+    int width = 512;
+    int size = height * width;
+    int mode = 1;
+    int padsize=1;
+    int masklength=padsize*2+1;
+    int masksize=pow(masklength,2);
+    int resize = pow((height + padsize * 2), 2);
+    int A=1;
+    char walkbridge_path[] = "../data/walkbridge.raw";
+    char wk_pad_windowname[] = "3.b_pad";
+    char wk_r1f1_windowname[] = "3.b_r1f1";
+    char wk_r2f1_windowname[] = "3.b_r2f1";
+    char wk_r4f1_windowname[] = "3.b_r4f1";
+    char wk_r1f2_windowname[] = "3.b_r1f2";
+    char wk_r2f2_windowname[] = "3.b_r2f2";
+    char wk_r4f2_windowname[] = "3.b_r4f2";
+    char hw3_walkbridge[] = "../data/hw3_walkbridge.png";
+    char hw3_wkbridge_r1f1[] = "../data/hw3.a_wkbridge_r1f1.png";
+    char hw3_wkbridge_r2f1[] = "../data/hw3.a_wkbridge_r2f1.png";
+    char hw3_wkbridge_r4f1[] = "../data/hw3.a_wkbridge_r4f1.png";
+    char hw3_wkbridge_r1f2[] = "../data/hw3.a_wkbridge_r1f2.png";
+    char hw3_wkbridge_r2f2[] = "../data/hw3.a_wkbridge_r2f2.png";
+    char hw3_wkbridge_r4f2[] = "../data/hw3.a_wkbridge_r4f2.png";
+    unsigned char *pixel = new unsigned char[size]();
+    int* mask = new int[masksize];
+    int* mask_highboost = new int[masksize];
+    FILE *walkbridge_file;
+    Mat walkbridge, walkbridge_pad, walkbridge_r1f1, walkbridge_r2f1, walkbridge_r4f1, walkbridge_r1f2, walkbridge_r2f2, walkbridge_r4f2;
+    
+    walkbridge.create(height, width, CV_8UC1);
+    walkbridge_pad.create(height + padsize*2, width + padsize*2, CV_8UC1);
+    walkbridge_r1f1.create(height, width, CV_8UC1);
+    walkbridge_r2f1.create(height, width, CV_8UC1);
+    walkbridge_r4f1.create(height, width, CV_8UC1);
+    walkbridge_r1f2.create(height, width, CV_8UC1);
+    walkbridge_r2f2.create(height, width, CV_8UC1);
+    walkbridge_r4f2.create(height, width, CV_8UC1);
+    pixel = readImage(walkbridge_path, size, walkbridge_file, pixel);
+    memcpy(walkbridge.data, pixel, size);
+    imwrite(hw3_walkbridge,walkbridge);
+    
+    //r1f1
+    walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
+    mask[0]=0;mask[1]=-1;mask[2]=0;mask[3]=-1;mask[4]=+4;mask[5]=-1;mask[6]=0;mask[7]=-1;mask[8]=0;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r1f1=conv(walkbridge_pad, walkbridge_r1f1, mask_highboost, height+padsize*2, masklength);
+    
+    //r2f1
+    A=2;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r2f1=conv(walkbridge_pad, walkbridge_r2f1, mask_highboost, height+padsize*2, masklength);
+
+    
+    
+    //r4f1
+    A=4;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r4f1=conv(walkbridge_pad, walkbridge_r4f1, mask_highboost, height+padsize*2, masklength);
+
+
+    //r1f2
+    mask[0]=-1;mask[1]=-1;mask[2]=-1;mask[3]=-1;mask[4]=+8;mask[5]=-1;mask[6]=-1;mask[7]=-1;mask[8]=-1;
+    A=1;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r1f2=conv(walkbridge_pad, walkbridge_r1f2, mask_highboost, height+padsize*2, masklength);
+
+    //r2f2
+    A=2;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r2f2=conv(walkbridge_pad, walkbridge_r2f2, mask_highboost, height+padsize*2, masklength);
+
+    //r4f2
+    A=4;
+    mask_highboost=highboostMask(mask,A,masksize);
+    walkbridge_r4f2=conv(walkbridge_pad, walkbridge_r4f2, mask_highboost, height+padsize*2, masklength);
+
+    
+
+    imwrite(hw3_wkbridge_r1f1,walkbridge_r1f1);
+    imwrite(hw3_wkbridge_r2f1,walkbridge_r2f1);
+    imwrite(hw3_wkbridge_r4f1,walkbridge_r4f1);
+    imwrite(hw3_wkbridge_r1f2,walkbridge_r1f2);
+    imwrite(hw3_wkbridge_r2f2,walkbridge_r2f2);
+    imwrite(hw3_wkbridge_r4f2,walkbridge_r4f2);
+    showImage(wk_r1f1_windowname, walkbridge_r1f1);
+    showImage(wk_r2f1_windowname, walkbridge_r2f1);
+    showImage(wk_r4f1_windowname, walkbridge_r4f1);
+    showImage(wk_r1f2_windowname, walkbridge_r1f2);
+    showImage(wk_r2f2_windowname, walkbridge_r2f2);
+    showImage(wk_r4f2_windowname, walkbridge_r4f2);
+    closeImage(wk_r1f1_windowname);
+}
+
+int hw4()
+{
+    int masklength=5;
+    int masksize=masklength*masklength;
+    char hw4_turtle[] = "../HW_4/data/turtle512.raw";
+    double* mask=new double[masksize]();
+    double sigma=0.8;
+    mask=gaussian(masklength, sigma);
+    for(int i=0;i<masksize;i++)
+    {
+        printf("%d mask=%f\n",i,mask[i]);
+    }
+    // Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length);
+}
+
 int main(int argc, char const *argv[])
 {
     // hw1_a();
     // hw1_b();
     // hw2();
-    hw3();
+    // hw3_a();
+    // hw3_b();
+    hw4();
     return 0;
 }

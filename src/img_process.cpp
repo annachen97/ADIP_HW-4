@@ -253,3 +253,88 @@ Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_l
     }
     return out_image;
 }
+
+int* highboostMask(int* mask,int A,int masksize)
+{
+    for(int i=0;i<masksize;i++)
+    {
+        mask[i]=A*mask[i];
+    }
+
+    return mask;
+}
+
+Mat localEnhencement(Mat padedimage, int imglength, int masklength) //mask=3*3, masklength=3    
+{
+    int initial=(masklength-1)/2;
+    int masksize=pow(masklength,2);
+    int imgsize=pow(imglength,2);
+    int gryl=0;
+    int x=0,y=0;
+    Mat le_mat(imglength-masklength+1,imglength-masklength+1,CV_8UC1);
+    unsigned char* pixel=new unsigned char[masksize]();
+    for(int i=initial;i<(imglength-initial);i++)
+    // for(int i=initial;i<=10;i++) //test
+    {
+        for (int j=initial; j<(imglength-initial); j++)
+        // for (int j=initial; j<=10; j++)
+        {
+            for(int maskx=(i-initial);maskx<=(i+initial);maskx++)
+            {
+                
+                for(int masky=(j-initial);masky<=(j+initial);masky++)
+                {
+                    pixel[x*masklength+y]=padedimage.at<uchar>(maskx,masky);
+                    y=y+1;
+                }
+                x=x+1;
+                y=0;
+                
+            }
+            
+            x=0;
+            unsigned int* gryl_statistics=new unsigned int[256]();
+            gryl_statistics=histogram(gryl_statistics, pixel, masksize);
+            double count=0.0;
+            int pixelsgryl=padedimage.at<uchar>(i,j);
+            for(int p=0;p<=pixelsgryl;p++)
+            {
+                count=count+gryl_statistics[p];
+            }
+             if(count>masksize)
+            {
+                std::cout<<"error!!"<<std::endl;
+            }
+            count=count/masksize;
+            gryl=255*count;
+            if(gryl>255||gryl<0)
+            {
+                std::cout<<"error!!"<<std::endl;
+            }
+            le_mat.at<uchar>(i-initial,j-initial)=gryl;
+
+        }
+    }
+    return le_mat;
+}
+
+
+double* gaussian(int masklength, double sigma)
+{
+    #define PI 3.1415926
+    int masksize=pow(masklength,2);
+    int cordinate_initial=(masklength-1)/2;
+    double* mask=new double[masksize]();
+    int x=0,y=0;
+    
+    for(int i=0;i<masklength;i++)
+    {
+        for(int j=0;j<masklength;j++)
+        {   
+            x=j-cordinate_initial;
+            y=i-cordinate_initial;
+            mask[i*masklength+j]=(1/(2*PI*sigma))*exp(-1*(x*x+y*y)/(2*sigma*sigma));
+        }
+    }
+    return mask;
+}

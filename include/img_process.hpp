@@ -28,3 +28,9 @@ Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode);
 unsigned char* storeMat2Pixel(Mat image,unsigned char* pixel,int size);
 
 Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length);
+
+int* highboostMask(int* mask,int A,int masksize);
+
+Mat localEnhencement(Mat padedimage, int imglength, int masklength);
+
+double* gaussian(int masklength, double sigma);
