@@ -182,23 +182,23 @@ Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode)
                     padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,0);
                 }else if (i<padsize&&j>=padsize&&j<boundary) //zone2
                 {
-                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,j);
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,j-padsize);
                 }else if (i<padsize&&j>=boundary) //zone3
                 {
                     padimage.at<uchar>(i,j)=oldimage.at<uchar>(0,boundary-padsize-1);
                 }else if(i>=padsize&&i<boundary&&j<padsize)    //zone4
                 {
-                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i,0);
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i-padsize,0);
                 }else if(i>=padsize&&i<boundary&&j>=boundary) //zone5
                 {
-                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i,boundary-padsize-1);
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(i-padsize,boundary-padsize-1);
                 }else if (i>=boundary&&j<padsize)   //zone6
                 {
                     padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,0);
                 }else if (i>=boundary&&j>=padsize&&j<boundary)   //zone7
                 {
-                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,j);
-                }else if (i>=boundary&&j>=boundary)   //zone7
+                    padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,j-padsize);
+                }else if (i>=boundary&&j>=boundary)   //zone8
                 {
                     padimage.at<uchar>(i,j)=oldimage.at<uchar>(boundary-padsize-1,boundary-padsize-1);
                 }else
@@ -215,8 +215,41 @@ Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode)
     return padimage;
 }
 
-
-
-
-
-
+Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length)
+{
+    int init_pixel=(mask_length-1)/2;
+    int x=0,y=0;
+    int result=0;
+    int count=0;
+    for(int i=init_pixel;i<image_length-init_pixel;i++)
+    {
+        count=count+1;
+        for(int j=init_pixel;j<image_length-init_pixel;j++)
+        {
+            for(int masky=i-init_pixel;masky<=i+init_pixel;masky++)
+            {
+                for(int maskx=j-init_pixel;maskx<=j+init_pixel;maskx++)
+                {   
+                    result=result+paded_image.at<uchar>(masky,maskx)*mask[x*mask_length+y];
+                    y=y+1;
+                }
+                y=0;
+                x=x+1;
+            }
+            if(result<0)
+            {
+                result=0;
+            }else if (result>255)
+            {
+                result=255;
+            }
+            
+            out_image.at<uchar>(i-init_pixel,j-init_pixel)=result;
+            // printf("out_image.at<uchar>(i,j)=%d\n",out_image.at<uchar>(i,j));
+            result=0;
+            x=0; 
+        }
+        // printf("count=%d\n",count);
+    }
+    return out_image;
+}

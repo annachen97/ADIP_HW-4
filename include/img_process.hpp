@@ -26,3 +26,5 @@ unsigned char *match(unsigned char *mapping,unsigned char *hs_pixel,unsigned cha
 Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode);
 
 unsigned char* storeMat2Pixel(Mat image,unsigned char* pixel,int size);
+
+Mat conv(Mat paded_image, Mat out_image, int* mask, int image_length, int mask_length);
