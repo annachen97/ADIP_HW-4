@@ -23,9 +23,9 @@ void hw1_a()
     unsigned char *hs_pixel = new unsigned char[size]();
     unsigned char *lena_pixel = new unsigned char[size]();
     unsigned char *hs_new_pixel = new unsigned char[size]();
-    unsigned int *hs_gryl_statistics = new unsigned int[256](); //統計每個pixel的灰階，用unsigned char會溢位
-    unsigned int *lena_gryl_statistics = new unsigned int[256]();
-    unsigned int *hs_gryl_statistics_new = new unsigned int[256]();
+    unsigned long *hs_gryl_statistics = new unsigned long[256](); //統計每個pixel的灰階，用unsigned char會溢位
+    unsigned long *lena_gryl_statistics = new unsigned long[256]();
+    unsigned long *hs_gryl_statistics_new = new unsigned long[256]();
     unsigned char *mapping = new unsigned char[256]();
 
     Mat house_512, new_house_512, lenamat_512, house_512_his, lenamat_512_his, new_house_512_his;
@@ -60,12 +60,12 @@ void hw1_a()
     // std::cout<<count<<std::endl;
 
     max = findMax(hs_gryl_statistics);
-    std::cout << "max=" << max << std::endl;
+    std::cout << "hs_gryl_statistics's max=" << max << std::endl;
     max = max / 255 + 1;
     house_512_his = drawHistogram(hs_gryl_statistics, house_512_his, max);
 
     max = findMax(lena_gryl_statistics);
-    std::cout << "max=" << max << std::endl;
+    std::cout << "lena_gryl_statistics's max=" << max << std::endl;
     max = max / 255 + 1;
     lenamat_512_his = drawHistogram(lena_gryl_statistics, lenamat_512_his, max);
 
@@ -76,7 +76,7 @@ void hw1_a()
 
     hs_gryl_statistics_new = histogram(hs_gryl_statistics_new, hs_new_pixel, size);
     max = findMax(hs_gryl_statistics_new);
-    std::cout << "max=" << max << std::endl;
+    std::cout << "hs_gryl_statistics_new's max=" << max << std::endl;
     max = max / 255 + 1;
     new_house_512_his = drawHistogram(hs_gryl_statistics_new, new_house_512_his, max);
 
@@ -99,10 +99,14 @@ void hw1_b()
     int width = 512;
     int size = height * width;
     int masklength=3;   //masksize=3*3 padlength=1 masklength=3 //must be odd
+    long max=0;
     char house512_path[] = "../data/house512.raw";
     char hs_le3_path[] = "../data/hw1.b_hs_le3.png";
     char hs_le5_path[] = "../data/hw1.b_hs_le5.png";
     char hs_le9_path[] = "../data/hw1.b_hs_le9.png";
+    char hs_le3_his_path[] = "../data/hw1.b_hs_his_le3.png";
+    char hs_le5_his_path[] = "../data/hw1.b_hs_his_le5.png";
+    char hs_le9_his_path[] = "../data/hw1.b_hs_his_le9.png";
     char hs_windowname[] = "1.b_hs512";
     char hs_pad_windowname[] = "1.b_hs512_pad";
     char hs_le3_windowname[] = "1.b_le3";
@@ -110,8 +114,10 @@ void hw1_b()
     char hs_le9_windowname[] = "1.b_le9";
     unsigned char *hs_pixel = new unsigned char[size]();
     unsigned char *hs_pad_pixel = new unsigned char[size]();
-    unsigned int *gryl_statistics = new unsigned int[256]();
-    Mat house_512, house_512_pad, hs_le3, hs_le5, hs_le9;   //local enhencement
+    unsigned long *gryl_statistics1 = new unsigned long[256]();
+    unsigned long *gryl_statistics2 = new unsigned long[256]();
+    unsigned long *gryl_statistics3 = new unsigned long[256]();
+    Mat house_512, house_512_pad, hs_le3, hs_le5, hs_le9,hs_le3_his,hs_le5_his,hs_le9_his;   //local enhencement
     FILE *hs_512;
     
 
@@ -119,6 +125,9 @@ void hw1_b()
     hs_le3.create(height, width, CV_8UC1);
     hs_le5.create(height, width, CV_8UC1);
     hs_le9.create(height, width, CV_8UC1);
+    hs_le3_his.create(256, 256, CV_8UC1);
+    hs_le5_his.create(256, 256, CV_8UC1);
+    hs_le9_his.create(256, 256, CV_8UC1);
 
     hs_pixel = readImage(house512_path, size, hs_512, hs_pixel);
     memcpy(house_512.data, hs_pixel, size);
@@ -129,10 +138,14 @@ void hw1_b()
     house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
     int mode = 1;
     house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
-    // hs_pad_pixel = storeMat2Pixel(house_512_pad, hs_pad_pixel, resize);
-    // gryl_statistics = histogram(gryl_statistics, hs_pad_pixel, resize);
 
     hs_le3=localEnhencement(house_512_pad, height+masklength-1, masklength);
+    hs_pad_pixel = storeMat2Pixel(hs_le3, hs_pad_pixel, size);
+    gryl_statistics1 = histogram(gryl_statistics1, hs_pad_pixel, size);
+    max = findMax(gryl_statistics1);
+    std::cout << "hs_gryl_statistics's max=" << max << std::endl;
+    max = max / 255 + 1;
+    hs_le3_his = drawHistogram(gryl_statistics1, hs_le3_his, max);
 
     masklength=5;
     padsize = (masklength-1)/2;
@@ -140,6 +153,12 @@ void hw1_b()
     house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
     house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
     hs_le5=localEnhencement(house_512_pad, height+masklength-1, masklength);
+    hs_pad_pixel = storeMat2Pixel(hs_le5, hs_pad_pixel, size);
+    gryl_statistics2 = histogram(gryl_statistics2, hs_pad_pixel, size);
+    max = findMax(gryl_statistics2);
+    std::cout << "hs_gryl_statistics's max=" << max << std::endl;
+    max = max / 255 + 1;
+    hs_le5_his = drawHistogram(gryl_statistics2, hs_le5_his, max);
 
     masklength=9;
     padsize = (masklength-1)/2;
@@ -147,10 +166,20 @@ void hw1_b()
     house_512_pad.create(height + padsize * 2, width + padsize * 2, CV_8UC1);
     house_512_pad = padding(house_512, house_512_pad, padsize, resize, mode);
     hs_le9=localEnhencement(house_512_pad, height+masklength-1, masklength);
+    hs_pad_pixel = storeMat2Pixel(hs_le9, hs_pad_pixel, size);
+    
+    gryl_statistics3 = histogram(gryl_statistics3, hs_pad_pixel, size);
+    max = findMax(gryl_statistics3);
+    std::cout << "hs_gryl_statistics's max=" << max << std::endl;
+    max = max / 255 + 1;
+    hs_le9_his = drawHistogram(gryl_statistics3, hs_le9_his, max);
 
     imwrite(hs_le3_path,hs_le3);
+    imwrite(hs_le3_his_path,hs_le3_his);
     imwrite(hs_le5_path,hs_le5);
+    imwrite(hs_le5_his_path,hs_le5_his);
     imwrite(hs_le9_path,hs_le9);
+    imwrite(hs_le9_his_path,hs_le9_his);
     showImage(hs_windowname, house_512);
     showImage(hs_pad_windowname, house_512_pad);
     showImage(hs_le3_windowname, hs_le3);
@@ -215,27 +244,27 @@ void hw3_a()
     walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
     // showImage("pad1", walkbridge_pad);
     mask[0]=0;mask[1]=-1;mask[2]=0;mask[3]=-1;mask[4]=+4;mask[5]=-1;mask[6]=0;mask[7]=-1;mask[8]=0;
-    walkbridge_zf1=conv(walkbridge_pad, walkbridge_zf1, mask, height+padsize*2, masklength);
+    walkbridge_zf1=conv(walkbridge_pad, walkbridge_zf1, mask, height+padsize*2, masklength,1);
     
     //rf1
     mode=1;
     walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
     // showImage("pad2", walkbridge_pad);
-    walkbridge_rf1=conv(walkbridge_pad, walkbridge_rf1, mask, height+padsize*2, masklength);
+    walkbridge_rf1=conv(walkbridge_pad, walkbridge_rf1, mask, height+padsize*2, masklength,1);
 
     mask[0]=-1;mask[1]=-1;mask[2]=-1;mask[3]=-1;mask[4]=+8;mask[5]=-1;mask[6]=-1;mask[7]=-1;mask[8]=-1;
     //zf2
     mode=0;
     walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
     // showImage("pad2", walkbridge_pad);
-    walkbridge_zf2=conv(walkbridge_pad, walkbridge_zf2, mask, height+padsize*2, masklength);
+    walkbridge_zf2=conv(walkbridge_pad, walkbridge_zf2, mask, height+padsize*2, masklength,1);
 
 
     //rf2
     mode=1;
     walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
     // showImage("pad2", walkbridge_pad);
-    walkbridge_rf2=conv(walkbridge_pad, walkbridge_rf2, mask, height+padsize*2, masklength);
+    walkbridge_rf2=conv(walkbridge_pad, walkbridge_rf2, mask, height+padsize*2, masklength,1);
 
     imwrite(hw3_wkbridge_zf1,walkbridge_zf1);
     imwrite(hw3_wkbridge_rf1,walkbridge_rf1);
@@ -296,36 +325,36 @@ void hw3_b()
     walkbridge_pad = padding(walkbridge, walkbridge_pad, padsize, resize, mode);
     mask[0]=0;mask[1]=-1;mask[2]=0;mask[3]=-1;mask[4]=+4;mask[5]=-1;mask[6]=0;mask[7]=-1;mask[8]=0;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r1f1=conv(walkbridge_pad, walkbridge_r1f1, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r1f1=conv(walkbridge_pad, walkbridge_r1f1, mask_highboost, height+padsize*2, masklength,1);
     
     //r2f1
     A=2;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r2f1=conv(walkbridge_pad, walkbridge_r2f1, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r2f1=conv(walkbridge_pad, walkbridge_r2f1, mask_highboost, height+padsize*2, masklength,1);
 
     
     
     //r4f1
     A=4;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r4f1=conv(walkbridge_pad, walkbridge_r4f1, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r4f1=conv(walkbridge_pad, walkbridge_r4f1, mask_highboost, height+padsize*2, masklength,1);
 
 
     //r1f2
     mask[0]=-1;mask[1]=-1;mask[2]=-1;mask[3]=-1;mask[4]=+8;mask[5]=-1;mask[6]=-1;mask[7]=-1;mask[8]=-1;
     A=1;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r1f2=conv(walkbridge_pad, walkbridge_r1f2, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r1f2=conv(walkbridge_pad, walkbridge_r1f2, mask_highboost, height+padsize*2, masklength,1);
 
     //r2f2
     A=2;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r2f2=conv(walkbridge_pad, walkbridge_r2f2, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r2f2=conv(walkbridge_pad, walkbridge_r2f2, mask_highboost, height+padsize*2, masklength,1);
 
     //r4f2
     A=4;
     mask_highboost=highboostMask(mask,A,masksize);
-    walkbridge_r4f2=conv(walkbridge_pad, walkbridge_r4f2, mask_highboost, height+padsize*2, masklength);
+    walkbridge_r4f2=conv(walkbridge_pad, walkbridge_r4f2, mask_highboost, height+padsize*2, masklength,1);
 
     
 
@@ -344,13 +373,13 @@ void hw3_b()
     closeImage(wk_r1f1_windowname);
 }
 
-int hw4()
+int hw4_a()
 {
     int masklength=5;
     int masksize=masklength*masklength;
     int height=512;
     int width=512;
-    int padsize=(masklength-1)/2;
+    int padsize=(masklength-1);
     int resize=pow(height+padsize,2);
     char hw4_turtle[] = "../data/turtle512.raw";
     char hw4_turtle08[] = "../data/hw4.a_turtle08.png";
@@ -362,43 +391,63 @@ int hw4()
     double* mask=new double[masksize]();
     double sigma=0.8;
     int mode=1;
-    mask=gaussian(masklength, sigma);
     Mat turtle_512(height,width,CV_8UC1);
     Mat turtle_08(height,width,CV_8UC1);
     Mat turtle_13(height,width,CV_8UC1);    //sigma=1.3
     Mat turtle_2(height,width,CV_8UC1); //sigma=2
-    Mat padedimage(height+masklength,width+masklength,CV_8UC1);
+    Mat padedimage(height+masklength-1,width+masklength-1,CV_8UC1);
     FILE *turtle_file;
     unsigned char *turtle_pixel=new unsigned char[height*width]();
-
     turtle_pixel=readImage(hw4_turtle,height*width,turtle_file,turtle_pixel);
     memcpy(turtle_512.data,turtle_pixel,height*width);
-    // for(int i=0;i<masksize;i++)
-    // {
-    //     printf("%d mask=%f\n",i,mask[i]);
-    // }
+    mask=gaussian(masklength, sigma);
+    double sum1=0;
+    for(int i=0;i<masksize;i++)
+    {
+        sum1=sum1+mask[i];
+        // printf("%d mask=%f\n",i,mask[i]);
+    }
+    printf("sum1=%f\n",sum1);
     padedimage = padding(turtle_512, padedimage, padsize, resize, mode);
-    turtle_08=conv(padedimage, turtle_08, mask, height+padsize*2, masklength);
-
-    sigma=1.3;
-    mask=gaussian(masklength, sigma);
-    turtle_13=conv(padedimage, turtle_13, mask, height+padsize*2, masklength);
-    // for(int i=0;i<masksize;i++)
+    // for (int i = 0; i < padedimage.rows; i++)
     // {
-    //     printf("%d mask=%f\n",i,mask[i]);
-    // }
-
-    sigma=2;
-    mask=gaussian(masklength, sigma);
-    turtle_2=conv(padedimage, turtle_2, mask, height+padsize*2, masklength);
-    // for(int i=0;i<masksize;i++)
-    // {
-    //     printf("%d mask=%f\n",i,mask[i]);
+    //     for (int j = 0; j < padedimage.cols; j++)
+    //     {
+    //         printf("paded=%d\n",padedimage.at<uchar>(i,j));
+    //     }
+        
     // }
     
+    turtle_08=conv(padedimage, turtle_08, mask, height+padsize*2, masklength,sum1);
+
+    sigma=1.3;
+    double sum2=0;
+    mask=gaussian(masklength, sigma);
+    // padedimage = padding(turtle_512, padedimage, padsize, resize, mode);
+    for(int i=0;i<masksize;i++)
+    {   
+        sum2=sum2+mask[i];
+        // printf("%d mask=%f\n",i,mask[i]);
+    }
+    printf("sum2=%f\n",sum2);
+    turtle_13=conv(padedimage, turtle_13, mask, height+padsize*2, masklength,sum2);
+
+    sigma=2;
+    double sum3=0;
+    // padedimage = padding(turtle_512, padedimage, padsize, resize, mode);
+    mask=gaussian(masklength, sigma);
+    for(int i=0;i<masksize;i++)
+    {   
+        sum3=sum3+mask[i];
+        // printf("%d mask=%f\n",i,mask[i]);
+    }
+    printf("sum3=%f\n",sum3);
+    turtle_2=conv(padedimage, turtle_2, mask, height+padsize*2, masklength,sum3);
+    imshow("turtle",turtle_512);
     imwrite(hw4_turtle08,turtle_08);
     imwrite(hw4_turtle13,turtle_13);
     imwrite(hw4_turtle2,turtle_2);
+    imshow("pad1",padedimage);
     imshow(turtle08_window,turtle_08);
     imshow(turtle13_window,turtle_13);
     imshow(turtle2_window,turtle_2);
@@ -407,11 +456,30 @@ int hw4()
 
 int main(int argc, char const *argv[])
 {
-    // hw1_a();
-    // hw1_b();
-    // hw2();
-    // hw3_a();
-    // hw3_b();
-    hw4();
+    char Qx[10];
+    std::cout<<"Enter function you want to execute"<<std::endl;
+    std::cout<<"ex: 1.a for Q1.a , 2 for Q2"<<std::endl;
+    std::cin>>Qx;
+    if ((strcmp (Qx, "1.a") == 0))
+    {
+        hw1_a();
+    }else if ((strcmp (Qx, "1.b") == 0))
+    {
+        hw1_b();
+    }else if ((strcmp (Qx, "2") == 0))
+    {
+        hw2();
+    }else if ((strcmp (Qx, "3.a") == 0))
+    {
+        hw3_a();
+    }else if ((strcmp (Qx, "3.b") == 0))
+    {
+        hw3_b();
+    }else if ((strcmp (Qx, "4.a") == 0))
+    {
+        hw4_a();
+    }
+    
+    
     return 0;
 }

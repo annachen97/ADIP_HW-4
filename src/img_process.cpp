@@ -33,30 +33,45 @@ void closeImage(char window_name[])
 }
 
 
-unsigned int *histogram(unsigned int *gryl_statistics,unsigned char *pixel,int size)
+unsigned long *histogram(unsigned long* gryl_statistics,unsigned char *pixel,long size)
 {
     int grylevel=0;
-    for(int i=0;i<size;i++)
+    int count=0;
+    int temp=0;
+    for (int i = 0; i < 256; i++)
     {
+        gryl_statistics[i]=0;
+    }
+    // printf("size=%lu\n",size);
+    for(long i=0;i<size;i++)
+    {   
+
         grylevel=pixel[i];
         gryl_statistics[grylevel]=gryl_statistics[grylevel]+1;
-        
+        // printf("pixel[%lu]=%d\n",i,pixel[i]);
+        // printf("gryl_statistics[%d]=%lu\n",grylevel,gryl_statistics[grylevel]);
         /*method 2*/
         // for(int j=0;j<256;j++)
         // {
         //     if(pixel[i]==j)
         //     {
-        //         gryl_statistics[j]=gryl_statistics[j]+1;
+        //         temp=gryl_statistics[j];
+        //         gryl_statistics[j]=temp+1;
+        //         // printf("pixel=%d\n",pixel[i]);
+        //         // printf("gryl_statistics[grylevel]=%d\n",gryl_statistics[j]);
+        //         break;
         //     }
         // }
+        
+        count++;
     }
-    // int sum=0;
-    // for(int i=0;i<256;i++)
-    // {
-    //     sum=sum+gryl_statistics[i];
-    //     // printf("gryl=%d\n",gryl_statistics[i]);
-    // }
-    // printf("sum=%d\n",sum);
+    int sum=0;
+    for(int i=0;i<256;i++)
+    {
+        sum=sum+gryl_statistics[i];
+        // printf("gryl=%d\n",gryl_statistics[i]);
+    }
+    // printf("count=%d\n",count);
     return gryl_statistics;
 } 
 
@@ -71,7 +86,7 @@ double cdf(unsigned char *gryl_statistics,int size,int x)
     return cdf;
 }
 
-Mat drawHistogram(unsigned int *gryl_statistics, Mat histogram,int max)
+Mat drawHistogram(unsigned long *gryl_statistics, Mat histogram,int max)
 {
     for(int i=0;i<256;i++)
     {
@@ -84,9 +99,9 @@ Mat drawHistogram(unsigned int *gryl_statistics, Mat histogram,int max)
     return histogram;
 }
 
-int findMax(unsigned int *gryl_statistics)  //find maximum statistic
+long findMax(unsigned long *gryl_statistics)  //find maximum statistic
 {
-    int max=0;
+    long max=0;
     for(int i=0;i<256;i++)
     {
         if(gryl_statistics[i]>max){
@@ -97,7 +112,7 @@ int findMax(unsigned int *gryl_statistics)  //find maximum statistic
     return max;
 }
 
-unsigned char *histogramMatching(unsigned int *gryl_statistics1,unsigned int *gryl_statistics2)
+unsigned char *histogramMatching(unsigned long *gryl_statistics1,unsigned long *gryl_statistics2)
 {   
     int amount_sum1=0;
     int amount_sum2=0;
@@ -147,9 +162,10 @@ unsigned char* storeMat2Pixel(Mat image,unsigned char* pixel,int size)
     int width=pow(size,0.5);
     for (int i = 0; i < height; i++)
     {   
-        for (int j = 0; i < width; i++)
+        for (int j = 0; j < width; j++)
         {
             pixel[i*width+j]=image.at<uchar>(i,j);
+            // printf("pixel[i*width+j]=%d\n",pixel[i*width+j]);
         }
         
         
@@ -210,32 +226,92 @@ Mat padding(Mat oldimage,Mat padimage,int padsize,int resize,int mode)
             //    padimage.row(i+padsize).col(j+padsize)=oldimage.at<uchar>(i,j);
             }
         } 
-    }
+     }
+    //else if (mode==2)
+    // {
+    //     int boundary=pow(resize,0.5)-padsize;
+    //     padimage.zeros(pow(resize,0.5),pow(resize,0.5),CV_8UC1);
+
+    //     for (int areay = padsize; areay < boundary; areay++)    //center
+    //     {
+    //         for (int areax = padsize; areax < boundary; areax++)
+    //         {
+    //             padimage.at<uchar>(areay,areax)=oldimage.at<uchar>(areay-padsize,areax-padsize);
+    //         }
+    //     }
+
+    //     for (int areay = 0; areay < padsize; areay++)    //zone 2
+    //     {
+    //         for (int areax = padsize; areax < boundary; areax++)
+    //         {
+    //             padimage.at<uchar>(areay,areax)=oldimage.at<uchar>(areay,areax-padsize);
+    //         }
+    //     }
+
+    //     for (int areay = padsize; areay < boundary; areay++)    //zone 4
+    //     {
+    //         for (int areax = 0; areax < padsize; areax++)
+    //         {
+    //             padimage.at<uchar>(areay,areax)=oldimage.at<uchar>(areay-padsize,padsize-areax-1);
+    //         }
+    //     }
+
+    //     for (int areay = padsize; areay < boundary; areay++)    //zone 5
+    //     {
+    //         for (int areax = boundary; areax < boundary+padsize ; areax++)
+    //         {
+    //             // padimage.at<uchar>(areay,areax)=oldimage.at<uchar>(areay-padsize,boundary-padsize-areax-1);
+    //         }
+    //     }
+        
+    //     for(int areay=0;areay<padsize;areay++)  
+    //     {
+    //         for (int areax=0; areax<padsize; areax++)
+    //         {
+    //             padimage.at<uchar>(areay,areax)=oldimage.at<uchar>(padsize-areax-1,padsize-areay-1);
+    //         }
+    //     }
+
+
+    //     for(int i=0;i<(pow(resize,0.5));i++)
+    //     {
+    //         for(int j=0;j<(pow(resize,0.5));j++)
+    //         {  
+      
+    //         }
+    // }
     
     return padimage;
 }
 
-Mat conv(Mat paded_image, Mat out_image, double* mask, int image_length, int mask_length)
+Mat conv(Mat paded_image, Mat out_image, double* mask, int image_length, int mask_length,double sum)
 {
     int init_pixel=(mask_length-1)/2;
     int x=0,y=0;
-    int result=0;
     int count=0;
+    double result=0;
     for(int i=init_pixel;i<image_length-init_pixel;i++)
     {
         count=count+1;
         for(int j=init_pixel;j<image_length-init_pixel;j++)
         {
+            
             for(int masky=i-init_pixel;masky<=i+init_pixel;masky++)
             {
                 for(int maskx=j-init_pixel;maskx<=j+init_pixel;maskx++)
                 {   
-                    result=result+paded_image.at<uchar>(masky,maskx)*mask[x*mask_length+y];
-                    y=y+1;
+                    result=result+paded_image.at<uchar>(masky,maskx)*mask[y*mask_length+x];
+                    // printf("%d mask=%f\n",y*mask_length+x,mask[y*mask_length+x]);
+                    // printf("paded_image.at<uchar>(masky,maskx)=%d\n",paded_image.at<uchar>(masky,maskx));
+                    
+                    x=x+1;
+                    
                 }
-                y=0;
-                x=x+1;
+                x=0;
+                y=y+1;
             }
+            // printf("result=%f\n",result);
+            result=result/sum;
             if(result<0)
             {
                 result=0;
@@ -243,11 +319,9 @@ Mat conv(Mat paded_image, Mat out_image, double* mask, int image_length, int mas
             {
                 result=255;
             }
-            
             out_image.at<uchar>(i-init_pixel,j-init_pixel)=result;
-            // printf("out_image.at<uchar>(i,j)=%d\n",out_image.at<uchar>(i,j));
             result=0;
-            x=0; 
+            y=0; 
         }
         // printf("count=%d\n",count);
     }
@@ -293,7 +367,7 @@ Mat localEnhencement(Mat padedimage, int imglength, int masklength) //mask=3*3, 
             }
             
             x=0;
-            unsigned int* gryl_statistics=new unsigned int[256]();
+            unsigned long* gryl_statistics=new unsigned long[256]();
             gryl_statistics=histogram(gryl_statistics, pixel, masksize);
             double count=0.0;
             int pixelsgryl=padedimage.at<uchar>(i,j);
@@ -305,8 +379,10 @@ Mat localEnhencement(Mat padedimage, int imglength, int masklength) //mask=3*3, 
             {
                 std::cout<<"error!!"<<std::endl;
             }
+
             count=count/masksize;
             gryl=255*count;
+            
             if(gryl>255||gryl<0)
             {
                 std::cout<<"error!!"<<std::endl;
@@ -331,8 +407,8 @@ double* gaussian(int masklength, double sigma)
     {
         for(int j=0;j<masklength;j++)
         {   
-            x=j-cordinate_initial;
-            y=i-cordinate_initial;
+            y=j-cordinate_initial;
+            x=i-cordinate_initial;
             mask[i*masklength+j]=(1/(2*PI*sigma))*exp(-1*(x*x+y*y)/(2*sigma*sigma));
         }
     }
